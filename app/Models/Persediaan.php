@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Persediaan extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'obat_id','stok','pemakaian','bulan','tahun'
+    ];
 }

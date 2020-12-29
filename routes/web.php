@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\ObatController;
+use App\Http\Controllers\PersediaanController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -18,3 +19,6 @@ Route::get('/', function () {
 });
 
 Route::get('/machine', 'App\Http\Controllers\ClusteringController@machine');
+
+Route::resource('/obat', ObatController::class);
+Route::resource('/persediaan', PersediaanController::class);

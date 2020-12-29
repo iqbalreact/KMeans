@@ -3,9 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use KMeans\Space;
-use KMeans\Point;
-use KMeans\Cluster;
 use Phpml\Clustering\KMeans;
 
 class ClusteringController extends Controller
@@ -27,8 +24,7 @@ class ClusteringController extends Controller
             [62,10],[74,44],[37,42],[97,60],[47,73],
         ];
 
-        $kmeans = new KMeans(3);
+        $kmeans = new KMeans(2);
         return $kmeans->cluster($samples);
-        
     }
 }
