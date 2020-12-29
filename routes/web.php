@@ -14,10 +14,11 @@ use App\Http\Controllers\PersediaanController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
+Route::get('/dashboard', 'App\Http\Controllers\AdminController@index');
 Route::get('/machine', 'App\Http\Controllers\ClusteringController@machine');
 
 Route::resource('/obat', ObatController::class);
