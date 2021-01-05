@@ -16,8 +16,9 @@ class ObatController extends Controller
     public function index()
     {
         //
-        $obats = Obat::get()->toJson(JSON_PRETTY_PRINT);
-        return response($obats, 200);
+        $obats = Obat::all();
+        return view ('admin.obat.index', compact('obats'));
+        // return response($obats, 200);
     }
 
     /**
@@ -29,7 +30,7 @@ class ObatController extends Controller
     {
         //
 
-
+        return view ('admin.obat.create');
     }
 
     /**
@@ -41,12 +42,16 @@ class ObatController extends Controller
     public function store(Request $request)
     {
         //
+        // return $request;
         $obat = new Obat;
         $obat->nama_obat = $request->nama_obat;
         $obat->save();
-        return response()->json([
-            "message" => "obat record created"
-        ], 201);
+
+        return redirect()->route('obat.index');
+
+        // return response()->json([
+        //     "message" => "obat record created"
+        // ], 201);
 
     }
 
@@ -80,6 +85,11 @@ class ObatController extends Controller
     public function edit($id)
     {
         //
+
+        $obat = Obat::where('id', $id)->first();
+        // return $obat;
+        return view ('admin.obat.edit', compact('obat'));
+        
     }
 
     /**
@@ -92,13 +102,15 @@ class ObatController extends Controller
     public function update(Request $request, $id)
     {
         //
+        // return $id;
         if (Obat::where('id', $id)->exists()) {
             $obat = Obat::find($id);
             $obat->nama_obat = is_null($request->nama_obat) ? $obat->nama_obat : $request->nama_obat;
             $obat->save();
-            return response()->json([
-              "message" => "records updated successfully"
-            ], 200);
+            return redirect()->route('obat.index');
+            // return response()->json([
+            //   "message" => "records updated successfully"
+            // ], 200);
         } else {
             return response()->json([
                 "message" => "Student not found"
@@ -120,9 +132,10 @@ class ObatController extends Controller
             $obat = Obat::find($id);
             $obat->delete();
 
-            return response()->json([
-              "message" => "records deleted"
-            ], 202);
+            return redirect()->route('obat.index');
+            // return response()->json([
+            //   "message" => "records deleted"
+            // ], 202);
 
         } else {
 

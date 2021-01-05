@@ -15,7 +15,10 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.12",
         "laravel/tinker": "^2.5",
-        "php-ai/php-ml": "^0.9.0"
+        "laravel/ui": "^2.4",
+        "nesbot/carbon": "^2.43",
+        "php-ai/php-ml": "^0.9.0",
+        "spatie/laravel-permission": "^3.18"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
@@ -40,12 +43,18 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/Helpers/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
-        }
+        },
+        "files": [
+            "app/Helpers/helpers.php"
+        ]
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

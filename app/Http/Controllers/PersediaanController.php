@@ -1,9 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use App\Models\Persediaan;
+use App\Models\Obat;
+use Helpers;
+use Carbon\Carbon;
+// use App\Helpers;
 
 class PersediaanController extends Controller
 {
@@ -15,8 +18,9 @@ class PersediaanController extends Controller
     public function index()
     {
         //
-        $persediaans = Persediaan::get()->toJson(JSON_PRETTY_PRINT);
-        return response($persediaans, 200);
+        $persediaans = Persediaan::all();
+        return view ('admin.persediaan.index', compact('persediaans'));
+        // return response($persediaans, 200);
     }
 
     /**
@@ -27,6 +31,8 @@ class PersediaanController extends Controller
     public function create()
     {
         //
+        $obats = Obat::all();
+        return view ('admin.persediaan.create', compact('obats'));
     }
 
     /**
@@ -38,17 +44,28 @@ class PersediaanController extends Controller
     public function store(Request $request)
     {
         //
+        $periode = [
+            'month' => Carbon::parse($request->periode)->translatedFormat('F'),
+            'year'  => Carbon::parse($request->periode)->format('Y')
+        ];
+        
+        
+
+        $bulan = customMonth($periode['month']);
+
         $persediaans = new Persediaan;
         $persediaans->obat_id = $request->obat_id;
         $persediaans->stok = $request->stok;
         $persediaans->pemakaian = $request->pemakaian;
-        $persediaans->bulan = $request->bulan;
-        $persediaans->tahun = $request->tahun;
+        $persediaans->bulan = $bulan;
+        $persediaans->tahun = $periode['year'];
         $persediaans->save();
 
-        return response()->json([
-            "message" => "obat record created"
-        ], 201);
+        return redirect()->route('persediaan.index');
+
+        // return response()->json([
+        //     "message" => "obat record created"
+        // ], 201);
     }
 
     /**
@@ -80,6 +97,9 @@ class PersediaanController extends Controller
     public function edit($id)
     {
         //
+        $persediaans = Persediaan::where('id', $id)->first();
+        $obats = Obat::all();
+        return view ('admin.persediaan.edit', compact('persediaans','obats'));
     }
 
     /**
@@ -92,22 +112,20 @@ class PersediaanController extends Controller
     public function update(Request $request, $id)
     {
         //
-        if (Obat::where('id', $id)->exists()) {
-            $persediaans = Obat::find($id);
-
-            $persediaans->obat_id = is_null($request->obat_id) ? $persediaans->obat_id : $request->obat_id;
+        // return $id;
+        if (Persediaan::where('id', $id)->exists()) {
+            $persediaans = Persediaan::find($id);
             $persediaans->stok = is_null($request->stok) ? $persediaans->stok : $request->stok;
             $persediaans->pemakaian = is_null($request->pemakaian) ? $persediaans->pemakaian : $request->pemakaian;
-            $persediaans->bulan = is_null($request->bulan) ? $persediaans->bulan : $request->bulan;
-            $persediaans->tahun = is_null($request->tahun) ? $persediaans->tahun : $request->tahun;
             $persediaans->save();
+            return redirect()->route('persediaan.index');
 
-            return response()->json([
-              "message" => "records updated successfully"
-            ], 200);
+            // return response()->json([
+            //   "message" => "records updated successfully"
+            // ], 200);
         } else {
             return response()->json([
-                "message" => "Student not found"
+                "message" => "Persediaans not found"
             ], 404);
         }
     }
@@ -124,10 +142,10 @@ class PersediaanController extends Controller
         if(Persediaan::where('id', $id)->exists()) {
             $persediaans = Persediaan::find($id);
             $persediaans->delete();
-
-            return response()->json([
-              "message" => "records deleted"
-            ], 202);
+            return redirect()->route('persediaan.index');
+            // return response()->json([
+            //   "message" => "records deleted"
+            // ], 202);
 
         } else {
 

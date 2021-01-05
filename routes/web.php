@@ -14,11 +14,13 @@ use App\Http\Controllers\PersediaanController;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/login', function () {
+    return view('login');
+});
 
 Route::get('/dashboard', 'App\Http\Controllers\AdminController@index');
+Route::get('/kmeans', 'App\Http\Controllers\AdminController@prosesPage')->name('kmeans.index');
+Route::post('/kmeans/perhitungan', 'App\Http\Controllers\AdminController@perhitungan')->name('kmeans.perhitungan');
 Route::get('/machine', 'App\Http\Controllers\ClusteringController@machine');
 
 Route::resource('/obat', ObatController::class);
