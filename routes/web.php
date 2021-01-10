@@ -18,10 +18,27 @@ Route::get('/login', function () {
     return view('login');
 });
 
-Route::get('/dashboard', 'App\Http\Controllers\AdminController@index');
-Route::get('/kmeans', 'App\Http\Controllers\AdminController@prosesPage')->name('kmeans.index');
-Route::post('/kmeans/perhitungan', 'App\Http\Controllers\AdminController@perhitungan')->name('kmeans.perhitungan');
-Route::get('/machine', 'App\Http\Controllers\ClusteringController@machine');
+Auth::routes();
 
-Route::resource('/obat', ObatController::class);
-Route::resource('/persediaan', PersediaanController::class);
+Route::get('/', function () {
+    return redirect('/login');
+});
+
+Route::get('/home', 'App\Http\Controllers\AdminController@index')->name('home');
+
+Route::group(['middleware' => ['auth'], 'prefix' => 'admin'], function () {
+    Route::get('/dashboard', 'App\Http\Controllers\AdminController@index');
+    
+    Route::get('/kmeans', 'App\Http\Controllers\AdminController@prosesPage')->name('kmeans.index');
+    
+    Route::post('/kmeans/perhitungan', 'App\Http\Controllers\AdminController@perhitungan')->name('kmeans.perhitungan');
+    
+    Route::get('/machine', 'App\Http\Controllers\ClusteringController@machine');
+
+    Route::get('/report/{bulan}/{tahun}', 'App\Http\Controllers\ReportController@report')->name('report');
+    
+    Route::resource('/obat', ObatController::class);
+    
+    Route::resource('/persediaan', PersediaanController::class);
+    
+});

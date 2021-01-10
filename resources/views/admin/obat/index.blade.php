@@ -15,10 +15,12 @@
            <div class="col-12">
                 <div class="card mb-4">
                     <div class="card-header">
-                        {{-- <a href="{{route('obat.create')}}">
+                        @if (Auth::user()->role == 'admin')
+                        <a href="{{route('obat.create')}}">
                             <i class="fas fa-table mr-1"></i>
                             Tambah Obat
-                        </a> --}}
+                        </a>
+                        @endif
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -27,7 +29,9 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Nama Obat</th>
-                                        {{-- <th>Aksi</th> --}}
+                                        @if (Auth::user()->role == 'admin')
+                                        <th>Aksi</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -35,7 +39,8 @@
                                         <tr>
                                             <td>{{$loop->iteration}}</td>
                                             <td>{{$item->nama_obat}}</td>
-                                            {{-- <td>
+                                            @if (Auth::user()->role == 'admin')
+                                            <td>
                                                 <div class="btn-group">
                                                     <a href="{{route('obat.edit', $item->id)}}" style="text-decoration: none">
                                                         <button class="btn btn-primary btn-sm">Edit</button>
@@ -48,7 +53,8 @@
                                                     </form>
                                                     
                                                 </div>
-                                            </td> --}}
+                                            </td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 </tbody>

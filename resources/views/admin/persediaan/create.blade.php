@@ -23,7 +23,7 @@
                             
                             <div class="form-group">
                                 <label for="exampleFormControlSelect1">Pilih Obat</label>
-                                <select class="form-control" name="obat_id" id="exampleFormControlSelect1" required>
+                                <select class="form-control" name="obat_id" id="obat" required>
                                     <option value="">Pilih</option>
                                     @foreach ($obats as $item)
                                     <option value="{{$item->id}}">{{$item->nama_obat}}</option>

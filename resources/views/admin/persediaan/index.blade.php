@@ -15,10 +15,12 @@
            <div class="col-12">
                 <div class="card mb-4">
                     <div class="card-header">
-                        {{-- <a href="{{route('persediaan.create')}}">
+                        @if (Auth::user()->role == 'admin' )
+                        <a href="{{route('persediaan.create')}}">
                             <i class="fas fa-table mr-1"></i>
                             Tambah Persediaan
-                        </a> --}}
+                        </a>
+                        @endif
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -31,7 +33,9 @@
                                         <th>Pemakaian</th>
                                         <th>Bulan</th>
                                         <th>Tahun</th>
-                                        {{-- <th>Aksi</th> --}}
+                                        @if (Auth::user()->role == 'admin')
+                                        <th>Aksi</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -43,7 +47,8 @@
                                         <td>{{$item->pemakaian}}</td>
                                         <td>{{$item->bulan}}</td>
                                         <td>{{$item->tahun}}</td>
-                                        {{-- <td>
+                                        @if (Auth::user()->role == 'admin')
+                                        <td>
                                             <div class="btn-group">
                                                 <a href="{{route('persediaan.edit', $item->id)}}" style="text-decoration: none">
                                                     <button class="btn btn-primary btn-sm">Edit</button>
@@ -56,7 +61,8 @@
                                                 </form>
                                                 
                                             </div>
-                                        </td> --}}
+                                        </td>
+                                        @endif
                                     </tr>
                                     @endforeach
                                 </tbody>

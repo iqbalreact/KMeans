@@ -1,83 +1,24 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
 use App\Models\Persediaan;
 use App\Models\Obat;
-use Illuminate\Http\Request;
-use Carbon\Carbon;
-use Helpers;
-use Phpml\Clustering\KMeans;
+use PDF;
 
-class AdminController extends Controller
+class ReportController extends Controller
 {
     //
-    public function index() {
-        # code...
-        $obat = count(Obat::all());
-        $persediaan = count(Persediaan::all());
-        return view ('admin.dashboard.index', compact('obat', 'persediaan'));
-    }
 
-    public function prosesPage() {
-        $persediaans = Persediaan::all();
-        // return $persediaans;
-        return view ('admin.kmeans.index', compact('persediaans'));
-        // return "Hello World";
-    }
-
-    // public function Perhitungan(request $request) {
-    //     # code...
-    //     // $persediaans = Persediaan::all();
-
-    //     // 4 centroid random
-    //     $centroid = Persediaan::inRandomOrder()->limit(4)->get();
-    //     // return $centroid;
-
-
-    //      //menarik data per-periode
-    //     $periode = [
-    //         'month' => Carbon::parse($request->periode)->translatedFormat('F'),
-    //         'year'  => Carbon::parse($request->periode)->format('Y')
-    //     ];
-
-    //     $bulan = customMonth($periode['month']);
-    //     $tahun = $periode['year'];
-        
-    //     $persediaans  = Persediaan::where('bulan', $bulan)
-    //                 ->where('tahun', $tahun)
-    //                 ->select('obat_id', 'stok', 'pemakaian')
-    //                 ->get();
-
-    //     $data = [];
-    //     foreach ($persediaans as $key => $value) {
-    //         $data[$value->obat_id] = [$value->stok, $value->pemakaian];
-    //     }
-    //     // return $data;
-    //     $samples = [ 'Label1' => [1, 1], 'Label2' => [8, 7], 'Label3' => [1, 2]];
-       
-    //     $kmeans = new KMeans(4);
-    //     $hasilKmeans = $kmeans->cluster($data);
-
-    //     return view ('admin.kmeans.hasil',compact('hasilKmeans'));
-        
-    // }
-
-    public function Perhitungan(request $request) {
-
-        $periode = [
-            'month' => Carbon::parse($request->periode)->translatedFormat('F'),
-            'year'  => Carbon::parse($request->periode)->format('Y')
-        ];
-
-        $bulan = customMonth($periode['month']);
-        $tahun = $periode['year'];
-        
+    public function report($bulan, $tahun)
+    {
         $data  = Persediaan::where('bulan', $bulan)
-                    ->where('tahun', $tahun)
-                    ->select('obat_id', 'stok', 'pemakaian')
-                    // ->limit(20)
-                    ->get();
-        
+        ->where('tahun', $tahun)
+        ->select('obat_id', 'stok', 'pemakaian')
+        // ->limit(20)
+        ->get();
+
         $counter = 0;
         $rasioawal = 0;
 
@@ -90,7 +31,7 @@ class AdminController extends Controller
         $centroidRandom = [$c1, $c2, $c3, $c4];
         $centroidawal = $centroidRandom;
 
-        
+
         $dataperhitungan = collect();
         $clusterC1 = collect();
         $clusterC2 = collect();
@@ -100,7 +41,7 @@ class AdminController extends Controller
         $ed = [];
         $edMinJarak = collect ();
         $edKuadranJarak = collect ();
-        
+
         foreach ($data as $key => $value) {
             $obat       = $value->obat_id;
             $stok       = $value->stok;
@@ -156,7 +97,6 @@ class AdminController extends Controller
 
             $edMinJarak->push($min);
 
-            // return $min;
         }
 
         // menghitung kuadran jarak 
@@ -222,7 +162,7 @@ class AdminController extends Controller
             $ed = [];
             $edMinJarak = collect ();
             $edKuadranJarak = collect ();
-            
+
             foreach ($data as $key => $value) {
                 $obat       = $value->obat_id;
                 $stok       = $value->stok;
@@ -316,23 +256,18 @@ class AdminController extends Controller
             $counter++;
 
             $dataperhitungan->push([
-                'rasioawal' => $rasioawal,
-                'rasio' => $rasio,
-                'wcv' => $wcv,
-                'bcv' => $bcv,
-                'loop' => $counter,
-                'c1' => $c1,
-                'c2' => $c2,
-                'c3' => $c3,
-                'c4' => $c4,
                 'cluster' => ['c1' => $anggotaC1, 'c2' => $anggotaC2,  'c3' => $anggotaC3, 'c4' => $anggotaC4]
-            ]);  
-            
+                ]);  
+
         }
 
         $hasil = $dataperhitungan->last();
-        
-        return view ('admin.kmeans.hasil', compact('data','centroidawal', 'dataperhitungan','bulan', 'tahun', 'hasil'));
+
+        $pdf = PDF::loadview('admin.report.index',compact('hasil', 'bulan', 'tahun'));
+        return $pdf->download('obat.pdf');
+
+        // return view ('admin.report.index', compact('hasil', 'bulan', 'tahun'));
+
     }
 
     function euclidean ($data, $stok, $pemakaian) {
@@ -375,6 +310,5 @@ class AdminController extends Controller
 
         return $cluster;
     }
-
 
 }
